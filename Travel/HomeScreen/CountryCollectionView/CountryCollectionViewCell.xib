@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="20037" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="20020"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="CollectionCell" id="gTV-IL-0wX" customClass="CountryCollectionViewCell" customModule="Travel" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="228" height="187"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                <rect key="frame" x="0.0" y="0.0" width="228" height="187"/>
+                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="eBb-Lv-xfE">
+                        <rect key="frame" x="0.0" y="0.0" width="228" height="187"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name Country" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="whW-99-IlB">
+                                <rect key="frame" x="0.0" y="162" width="228" height="25"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="25" id="dPX-5O-CtZ"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="JUC-pv-Zbz">
+                                <rect key="frame" x="54" y="7" width="120" height="150"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="150" id="78L-Fq-4Zm"/>
+                                    <constraint firstAttribute="width" constant="120" id="ScE-Zm-SRm"/>
+                                </constraints>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="whW-99-IlB" secondAttribute="trailing" id="81P-7A-O81"/>
+                            <constraint firstItem="whW-99-IlB" firstAttribute="leading" secondItem="eBb-Lv-xfE" secondAttribute="leading" id="Baw-kE-RSF"/>
+                            <constraint firstItem="JUC-pv-Zbz" firstAttribute="top" secondItem="eBb-Lv-xfE" secondAttribute="top" constant="7" id="Nzo-tC-F6S"/>
+                            <constraint firstItem="JUC-pv-Zbz" firstAttribute="centerX" secondItem="eBb-Lv-xfE" secondAttribute="centerX" id="cGg-Of-yac"/>
+                            <constraint firstAttribute="bottom" secondItem="whW-99-IlB" secondAttribute="bottom" id="gvG-dU-hPq"/>
+                        </constraints>
+                    </view>
+                </subviews>
+            </view>
+            <viewLayoutGuide key="safeArea" id="ZTg-uK-7eu"/>
+            <constraints>
+                <constraint firstItem="eBb-Lv-xfE" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" id="5TB-Sn-K2D"/>
+                <constraint firstAttribute="bottom" secondItem="eBb-Lv-xfE" secondAttribute="bottom" id="CpU-Vk-ZRa"/>
+                <constraint firstAttribute="trailing" secondItem="eBb-Lv-xfE" secondAttribute="trailing" id="mNn-nn-YT3"/>
+                <constraint firstItem="eBb-Lv-xfE" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" id="uuN-ee-99U"/>
+            </constraints>
+            <size key="customSize" width="228" height="187"/>
+            <connections>
+                <outlet property="imgCountry" destination="JUC-pv-Zbz" id="n2g-df-T7T"/>
+                <outlet property="lbNameCountry" destination="whW-99-IlB" id="G0d-GT-CPr"/>
+                <outlet property="view" destination="eBb-Lv-xfE" id="UM4-CF-FYr"/>
+            </connections>
+            <point key="canvasLocation" x="260.86956521739131" y="107.47767857142857"/>
+        </collectionViewCell>
+    </objects>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>
