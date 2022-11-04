@@ -38,7 +38,7 @@ class UserTableViewCell: UITableViewCell {
         datmatter.locale = .current
         datmatter.dateFormat = "HH:mm"
         lbTime.text = datmatter.string(from: timeSend as Date)
-        lbMassage.text = massage.massage
+        lbMassage.text = massage.massageSender
         ImageCache.share.fetchImage(massage.avatarSender) { image in
             self.imgUser.image = image
         }

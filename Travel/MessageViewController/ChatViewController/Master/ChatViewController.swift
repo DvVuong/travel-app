@@ -46,6 +46,7 @@ class ChatViewController: UIViewController {
         viewModel.dosomething.sink(receiveValue: {self.listUserCollection.reloadData()}).store(in: &subscriptions)
         viewModel.dosomething.sink(receiveValue: {self.userTableView.reloadData()}).store(in: &subscriptions)
         
+        
     }
     private func setupTableView() {
         userTableView.delegate = self
