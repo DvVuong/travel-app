@@ -17,9 +17,9 @@ final class ChatViewModel {
     var user: User?
     var otherUsers = [User]()
     var other: User?
-    var massages = [Massage]()
-    var massageDictionary = [String: Massage]()
-    var finalMassge = [Massage]()
+    var massages = [Message]()
+    var massageDictionary = [String: Message]()
+    var finalMassge = [Message]()
     var ref = Database.database().reference()
     
     init() {
@@ -74,7 +74,7 @@ final class ChatViewModel {
         ref.child("Massage").observe(.childAdded) { snapshot in
             self.ref.child("Massage").child(snapshot.key).observe(.value) { dataSnapshot in
                 if let value = dataSnapshot.value as? [String: Any] {
-                    let result = Massage(dict: value)
+                    let result = Message(dict: value)
                     for i in self.currentUser {
                         if i.id == result.receiverID {
                             if let senderID = result.sendeID {
@@ -102,7 +102,7 @@ final class ChatViewModel {
     func numberOfItemTableView() -> Int {
         return finalMassge.count
     }
-    func userForCellTableView(_ index: Int) -> Massage? {
+    func userForCellTableView(_ index: Int) -> Message? {
         guard index >= 0 && index < numberOfItemTableView() else {
             return nil
         }

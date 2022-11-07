@@ -10,22 +10,25 @@ import Combine
 import FirebaseAuth
 import FirebaseDatabase
 final class ConversationViewModel {
+    let passImageStr = PassthroughSubject<String, Never>()
     let dosomething = PassthroughSubject<Void, Never>()
     let receiverIDPublisher = PassthroughSubject<String, Never>()
     var ref = Database.database().reference()
     var senderID: User?
     var otherUser: String = ""
     var receiverID: User?
-    var massage = [Massage]()
-    var massage2: Massage?
+    var message = [Message]()
+    var imgMessage: String = ""
     var subcriptions = Set<AnyCancellable>()
-    init(){
+    init() {
+        passImageStr.sink { imgStr in
+            self.imgMessage = imgStr
+        }.store(in: &subcriptions)
         
-        receiverIDPublisher.sink { id in
-            self.otherUser = id
+        receiverIDPublisher.sink { idOther in
+            self.otherUser = idOther
         }.store(in: &subcriptions)
     }
-    
     func getCurrentUser() {
         if let id = Auth.auth().currentUser {
             self.ref.child("User").child(id.uid).observe(.value) { snapshot in
@@ -53,17 +56,15 @@ final class ConversationViewModel {
     //MARK: GET ALLMASSAGE FOR PER USER
     func getMassageUser() {
         let uid = Auth.auth().currentUser?.uid
-       
         let userMassgerRef = Database.database().reference().child("User-massage").child(uid!)
         userMassgerRef.observe(.childAdded) { (snapshot) in
             let massageID = snapshot.key
-        
             let massageReference = Database.database().reference().child("Massage").child(massageID)
             massageReference.observe(.value) { (data) in
                 if let dictionary = data.value as? [String: Any] {
-                    let value = Massage(dict: dictionary)
+                    let value = Message(dict: dictionary)
                     if   self.otherUser == value.sendeID || self.otherUser == value.receiverID {
-                        self.massage.append(value)
+                        self.message.append(value)
                         self.dosomething.send(())
                     }
                 }
@@ -71,13 +72,13 @@ final class ConversationViewModel {
         }
     }
     func numberOfItem() -> Int {
-        return massage.count
+        return message.count
     }
-    func userForCell(_ index: Int) -> Massage? {
+    func userForCell(_ index: Int) -> Message? {
         guard index >= 0 && index < numberOfItem() else  {
             return nil
         }
-        return massage[index]
+        return message[index]
     }
     
     func inputMaaasge(_ massage: String, _ reciverName: String, _ receiverID: String, _ linkAvatar: String) {
@@ -93,7 +94,8 @@ final class ConversationViewModel {
             "nameReceiver":  reciverName,
             "avatarReceiver": linkAvatar,
             "massageSender": massage ,
-            "time_send": currentTime
+            "time_send": currentTime,
+            "imageMessage": imgMessage
         ]
        childRef.updateChildValues(value) { (error, ref) in
             if error != nil {

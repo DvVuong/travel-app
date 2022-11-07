@@ -6,7 +6,7 @@
 //
 
 import Foundation
-class Data {
+class DetailCountrys {
     let name: String
     let image: String
     let descriptions: String

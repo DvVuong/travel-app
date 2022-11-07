@@ -46,7 +46,7 @@ class CollectionViewCell: UICollectionViewCell {
       
        
     }
-    func setupMessage(_ message: Massage) {
+    func setupMessage(_ message: Message) {
         ImageCache.share.fetchImage(message.avatarSender) { image in
             DispatchQueue.main.async {
                 self.imgProfile.image = image

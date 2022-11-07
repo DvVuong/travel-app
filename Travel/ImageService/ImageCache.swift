@@ -7,11 +7,11 @@
 
 import Foundation
 import UIKit
-class ImageCache {
+open  class ImageCache: NSObject {
     static var share = ImageCache()
     private let cache = NSCache<NSString, UIImage>()
     
-    private init() {}
+    private override init() {}
     
     public func fetchImage(_ url: String, completion: @escaping(UIImage?) -> Void) {
         let keyCache = url as NSString
@@ -38,5 +38,14 @@ class ImageCache {
             }
         }
         task.resume()
+    }
+    func convertImgaeToBase64(image: UIImage) -> String {
+            let imageData: Data? = image.jpegData(compressionQuality: 0.4)
+            let imageStr = imageData?.base64EncodedString(options: .lineLength64Characters) ?? ""
+            return imageStr
+    }
+    func convertBase64ToImage(_ imgStr: String)  -> UIImage {
+        let imageData = Data(base64Encoded: imgStr, options: .ignoreUnknownCharacters)!
+        return  UIImage(data: imageData)!
     }
 }

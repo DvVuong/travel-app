@@ -31,7 +31,7 @@ class UserTableViewCell: UITableViewCell {
 
         // Configure the view for the selected state
     }
-    func updateUI(_ massage: Massage) {
+    func updateUI(_ massage: Message) {
         let timeSend = NSDate(timeIntervalSince1970: massage.time_send.doubleValue)
         let datmatter = DateFormatter()
         datmatter.timeZone = .current

@@ -9,7 +9,7 @@ import Foundation
 import FirebaseDatabase
 import Combine
 final class DetailViewModel {
-    private var countrys = [Data]()
+    private var countrys = [DetailCountrys]()
     private var ref = Database.database().reference()
     
     let dosomething = PassthroughSubject<Void, Never>()
@@ -20,7 +20,7 @@ final class DetailViewModel {
         ref.child(url).observe(.childAdded) { (snapshot) in
             self.ref.child(url).child(snapshot.key).observe(.value) { (data) in
                 if let dictionary = data.value as? [String: Any] {
-                    let result = Data(dict: dictionary)
+                    let result = DetailCountrys(dict: dictionary)
                     self.countrys.append(result)
                     self.dosomething.send(())
                 }
@@ -30,7 +30,7 @@ final class DetailViewModel {
     func numberOfCountry() -> Int {
         return countrys.count
     }
-    func cellForCountry(_ index: Int) -> Data? {
+    func cellForCountry(_ index: Int) -> DetailCountrys? {
         guard index >= 0 && index < numberOfCountry() else {
             return nil
         }

@@ -7,7 +7,7 @@
 
 import Foundation
 import FirebaseAuth
-struct Massage {
+struct Message {
     let sendeID: String?
     let receiverID: String?
     let nameSender: String
@@ -27,9 +27,5 @@ struct Massage {
         self.avatarSender = dict["avatarSender"] as? String ?? ""
         
     }
-    func chatPartnerID() -> String? {
-        let id = Auth.auth().currentUser?.uid
-        print("vuongdv",id)
-        return receiverID == Auth.auth().currentUser?.uid ? sendeID : receiverID
-    }
+    
 }

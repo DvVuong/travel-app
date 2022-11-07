@@ -21,7 +21,7 @@ class ConversationTableViewCell: UITableViewCell {
 
         // Configure the view for the selected state
     }
-    func updateMassage(_ massage: Massage) {
+    func updateMassage(_ massage: Message) {
         if massage.sendeID == senderID {
             lbmassage.backgroundColor = .blue
         }

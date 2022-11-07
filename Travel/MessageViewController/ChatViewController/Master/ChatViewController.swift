@@ -16,11 +16,15 @@ class ChatViewController: UIViewController {
     @IBOutlet private weak var userTableView: UITableView!
     @IBOutlet weak var heightContrainCollectionView: NSLayoutConstraint!
     @IBOutlet private weak var lbSuggestions: UILabel!
+    @IBOutlet private weak var lbTitle: UILabel!
+    @IBOutlet private weak var viewTitle: UIView!
+    @IBOutlet private weak var viewTitleHeightContrains: NSLayoutConstraint!
+    @IBOutlet weak var topSearchViewContrains: NSLayoutConstraint!
     
     
-    var viewModel = ChatViewModel()
-    var cellModel = TableViewModel()
-    var subscriptions = Set<AnyCancellable>()
+    private var viewModel = ChatViewModel()
+    private var cellModel = TableViewModel()
+    private var subscriptions = Set<AnyCancellable>()
     
 
     override func viewDidLoad() {
@@ -32,7 +36,17 @@ class ChatViewController: UIViewController {
         onBind()
         
     }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: animated)
+        
+        if let indexPath = userTableView.indexPathForSelectedRow {
+            userTableView.deselectRow(at: indexPath, animated: true)
+        }
+    }
+       
     private func setupUI() {
+        lbTitle.layer.borderWidth = 0
         viewSearch.layer.cornerRadius = 8
         viewSearch.layer.masksToBounds = true
         setupListUserCollection()
@@ -40,7 +54,6 @@ class ChatViewController: UIViewController {
         setupLbSuggestions()
         searchTextField.delegate = self
         searchTextField.addTarget(self, action: #selector(searchTextFieldidChange(_:)), for: .editingChanged)
-        
     }
     private func onBind(){
         viewModel.dosomething.sink(receiveValue: {self.listUserCollection.reloadData()}).store(in: &subscriptions)
@@ -67,7 +80,6 @@ class ChatViewController: UIViewController {
         listUserCollection.register(nib, forCellWithReuseIdentifier: "userCollectionCell")
         if let layout = listUserCollection.collectionViewLayout as? UICollectionViewFlowLayout {
             layout.sectionInset = UIEdgeInsets(top: 10, left: 2, bottom: 10, right: 2)
-            
         }
     }
     @objc private func searchTextFieldidChange(_ textField: UITextField) {
@@ -75,8 +87,6 @@ class ChatViewController: UIViewController {
             viewModel.searchTextFieldPublisher.send(textField.text ?? "")
         }
     }
-    
-
 }
 extension ChatViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -103,15 +113,35 @@ extension ChatViewController: UICollectionViewDelegate, UICollectionViewDataSour
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: 100, height: 100)
     }
+    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        userTableView.deselectRow(at: indexPath, animated: true)
+    }
 }
 extension ChatViewController: UITextFieldDelegate {
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
         self.heightContrainCollectionView.constant = 0
+        UIView.animate(withDuration: 1, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 1, options: .transitionCrossDissolve, animations: {
+            self.view.layoutIfNeeded()
+        }, completion: nil)
+        self.topSearchViewContrains.constant = 0
+        UIView.transition(with: self.viewTitle, duration: 0.5, options: .transitionCrossDissolve
+                          , animations: {
+            self.viewTitle.isHidden = true
+        }, completion: nil)
+        self.viewTitle.isHidden = true
         self.lbSuggestions.isHidden = false
         return true
     }
     func textFieldDidEndEditing(_ textField: UITextField) {
         self.heightContrainCollectionView.constant = 100
+        UIView.transition(with: self.listUserCollection , duration: 0.5, options: .transitionCrossDissolve) {
+            self.listUserCollection.isHidden = false
+        }
+        self.topSearchViewContrains.constant = 50
+        UIView.transition(with: self.viewTitle, duration: 0.5, options: .transitionCrossDissolve
+                          , animations: {
+            self.viewTitle.isHidden = false
+        }, completion: nil)
         self.lbSuggestions.isHidden = true
     }
     

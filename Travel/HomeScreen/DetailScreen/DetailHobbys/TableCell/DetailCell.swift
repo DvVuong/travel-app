@@ -28,7 +28,7 @@ class DetailCell: UITableViewCell {
         // Configure the view for the selected state
         
     }
-    func updateUI(_ data: Data) {
+    func updateUI(_ data: DetailCountrys) {
         lbName.text = data.name
         tvDescriptions.text = data.descriptions
         lbPoint.text = "\(data.point_evaluation)"

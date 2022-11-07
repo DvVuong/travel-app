@@ -160,12 +160,20 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
     }
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView === hobbyCollection {
-            let vc = DetailCountrysViewController.instance()
+            let vc = DetailHobbysViewController.instance()
             if let index = viewModel.cellForHobby(indexPath.row) {
                 vc.url = index.name
             }
             present(vc, animated: true)
             navigationController?.pushViewController(vc, animated: true)
+        }
+        if collectionView === countryCollection {
+            let vc = DetailCountrysViewController.instance()
+            if let index = viewModel.cellForCountry(indexPath.row) {
+                vc.url = index.name
+                present(vc, animated: true, completion: nil)
+                navigationController?.pushViewController(vc, animated: true)
+            }
         }
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {

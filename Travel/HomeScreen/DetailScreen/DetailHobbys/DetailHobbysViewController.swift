@@ -8,10 +8,10 @@
 import UIKit
 import Combine
 
-class DetailCountrysViewController: UIViewController {
+class DetailHobbysViewController: UIViewController {
     
-    static func instance() -> DetailCountrysViewController {
-       let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "detailCountrysViewController") as! DetailCountrysViewController
+    static func instance() -> DetailHobbysViewController {
+       let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "detailHobbysViewController") as! DetailHobbysViewController
         return vc
     }
     @IBOutlet private weak var detailCountryTable: UITableView!
@@ -36,7 +36,7 @@ class DetailCountrysViewController: UIViewController {
         detailCountryTable.dataSource = self
     }
 }
-extension DetailCountrysViewController: UITableViewDelegate, UITableViewDataSource {
+extension DetailHobbysViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewModel.numberOfCountry()
     }

@@ -7,6 +7,7 @@
 
 import UIKit
 import Combine
+import PhotosUI
 import FirebaseAuth
 
 class ConversationViewController: UIViewController {
@@ -17,17 +18,23 @@ class ConversationViewController: UIViewController {
     @IBOutlet private weak var conversationCollection: UICollectionView!
     @IBOutlet private weak var masssageTextField: UITextField!
     @IBOutlet weak var massageWidthContrain: NSLayoutConstraint!
-    
     @IBOutlet weak var massageHeightContrain: NSLayoutConstraint!
-    
+    @IBOutlet private weak var photo: UIImageView!
+    @IBOutlet private weak var camera: UIImageView!
+    @IBOutlet private weak var sendImage: UIButton!
+    @IBOutlet private weak var cancelImage: UIButton!
+    @IBOutlet private weak var viewBtSendImage: UIView!
+    let photoPickerView = UIImagePickerController()
     @IBOutlet private var icon: UIImageView!
-
+    @IBOutlet weak var heightViewSendImageContrains: NSLayoutConstraint!
+    
     var linkUrl: String = ""
     var lbName: String = ""
     var receiverID: String? = ""
     var reciverName: String = ""
     var viewModel = ConversationViewModel()
     var subcriptions = Set<AnyCancellable>()
+    var timer: Timer?
     override func viewDidLoad() {
         super.viewDidLoad()
         updateUI()
@@ -35,50 +42,105 @@ class ConversationViewController: UIViewController {
         viewModel.getMassageUser()
         viewModel.getAllUser()
         viewModel.getCurrentUser()
-    
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: animated)
+    }
+    override func viewDidLayoutSubviews() {
+        viewBtSendImage.addSubview(sendImage)
+        viewBtSendImage.addSubview(cancelImage)
     }
     private func updateUI() {
        setupTableView()
         //MARK: MassageTextFIELD
-        masssageTextField.layer.cornerRadius = 8
+        masssageTextField.layer.cornerRadius = 12
         masssageTextField.layer.masksToBounds = true
         masssageTextField.delegate = self
+        masssageTextField.addTarget(self, action: #selector(handelIcon(_:)), for: .editingChanged)
         setupIcon()
+        setupCameraAndPhoto()
+        setupBtSendImage()
+        self.heightViewSendImageContrains.constant = -50
     }
     private func onBind() {
         viewModel.dosomething.sink(receiveValue: {self.conversationCollection.reloadData()}).store(in: &subcriptions)
         if let id = receiverID {
             viewModel.receiverIDPublisher.send(id)
         }
-        
     }
-    
-    private func setupTableView() {
+    @objc fileprivate func handelIcon(_ textField: UITextField) {
+        if textField == masssageTextField {
+            if textField.text!.isEmpty {
+                self.icon.image = UIImage(systemName: "hand.thumbsup.fill")
+            }
+            else {
+                self.icon.image = UIImage(systemName: "paperplane.fill")
+            }
+        }
+    }
+    fileprivate func setupBtSendImage() {
+        viewBtSendImage.addSubview(sendImage)
+        sendImage.backgroundColor = .blue
+        sendImage.isHidden = true
+        sendImage.layer.cornerRadius = 8
+        sendImage.layer.masksToBounds = true
+        sendImage.addTarget(self, action: #selector(handleBtImage(_:)), for: .touchUpInside)
+        //
+        viewBtSendImage.addSubview(cancelImage)
+        cancelImage.backgroundColor = .blue
+        cancelImage.isHidden = true
+        cancelImage.layer.cornerRadius = 8
+        cancelImage.layer.masksToBounds = true
+        cancelImage.addTarget(self, action: #selector(handleBtImage(_:)), for: .touchUpInside)
+    }
+    @objc fileprivate func handleBtImage(_ sender: UIButton) {
+//        if sender === sendImage {
+//            cancelImage.backgroundColor = .white
+//        } else {
+//            sendImage.backgroundColor = .white
+//        }
+    }
+    fileprivate func setupTableView() {
         conversationCollection.delegate = self
         conversationCollection.dataSource = self
         conversationCollection.alwaysBounceVertical = true
         let nib = UINib(nibName: "CollectionViewCell", bundle: nil)
         conversationCollection.register(nib, forCellWithReuseIdentifier: "chatCell")
-        
-        
-        
     }
-    private func setupIcon(){
+    fileprivate func setupIcon(){
         icon.isUserInteractionEnabled = true
         let tapGes = UITapGestureRecognizer(target: self, action: #selector(didTapOnSend))
         icon.addGestureRecognizer(tapGes)
+    }
+    fileprivate func setupCameraAndPhoto() {
+        camera.isUserInteractionEnabled = true
+        let tapGesCamera = UITapGestureRecognizer(target: self, action: #selector(didTapTakePhotoFormCamera))
+        camera.addGestureRecognizer(tapGesCamera)
+        
+        photo.isUserInteractionEnabled = true
+        let tapGesPhoto = UITapGestureRecognizer(target: self, action: #selector(didTapChoosePhoto))
+        photo.addGestureRecognizer(tapGesPhoto)
+    }
+    @objc func didTapTakePhotoFormCamera() {
+        
+        
         
     }
-
+    @objc func didTapChoosePhoto() {
+        photoPickerView.delegate = self
+        
+        present(photoPickerView, animated: true, completion: nil)
+    }
     @objc private func didTapOnSend() {
         if masssageTextField.text == "" {
             return
         }
         viewModel.inputMaaasge(masssageTextField.text!, reciverName, receiverID!, linkUrl)
         self.masssageTextField.text! = ""
+        self.icon.image = UIImage(systemName: "hand.thumbsup.fill")
     
     }
-    
 }
 extension ConversationViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -96,7 +158,7 @@ extension ConversationViewController: UICollectionViewDelegate, UICollectionView
         }
         return cell
     }
-    private func setupCell(_ cell: CollectionViewCell, _ message: Massage ) {
+    private func setupCell(_ cell: CollectionViewCell, _ message: Message ) {
         if message.sendeID == Auth.auth().currentUser?.uid {
             cell.bubbleView.backgroundColor = UIColor(red: 0, green: 137, blue: 0, alpha: 1)
             cell.textView.textColor = .white
@@ -111,14 +173,14 @@ extension ConversationViewController: UICollectionViewDelegate, UICollectionView
             cell.bubleViewRightAnchor?.isActive = false
             
         }
-        
+    }
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        conversationCollection.collectionViewLayout.invalidateLayout()
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        var height: CGFloat = 100
-        if viewModel.massage[indexPath.item] != nil {
-            height = estiamtedFrameForMessage(viewModel.massage[indexPath.item].massageSender).height + 10
-        }
+        var height: CGFloat = 80
+        height = estiamtedFrameForMessage(viewModel.message[indexPath.item].massageSender).height + 20
         return CGSize(width: view.frame.width, height: height)
     }
     
@@ -131,19 +193,15 @@ extension ConversationViewController: UICollectionViewDelegate, UICollectionView
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         return UIEdgeInsets(top: 8, left: 0, bottom: 10, right: 8)
     }
-    
-    
-   
 }
 extension ConversationViewController: UITextFieldDelegate {
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        self.icon.image = UIImage(systemName: "paperplane.fill")
+        if textField == masssageTextField {
+        }
     }
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
         if textField == masssageTextField {
             self.massageWidthContrain.constant = 250
-           // self.icon.image = UIImage(named: "paperplane.fill")
-            //self.icon.image = UIImage(systemName: "paperplane.fill")
         }
         return true
     }
@@ -151,4 +209,21 @@ extension ConversationViewController: UITextFieldDelegate {
         self.massageWidthContrain.constant = 150
         self.icon.image = UIImage(systemName: "hand.thumbsup.fill")
     }
+}
+
+extension ConversationViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage
+        let imgStr = ImageCache.share.convertImgaeToBase64(image: image!)
+        viewModel.passImageStr.send(imgStr)
+        self.heightViewSendImageContrains.constant = 100
+        UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 1, options: .transitionCrossDissolve, animations: {
+            self.view.layoutIfNeeded()
+        }, completion: nil)
+        photoPickerView.dismiss(animated: true)
+    }
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        photoPickerView.dismiss(animated: true)
+    }
+    
 }
