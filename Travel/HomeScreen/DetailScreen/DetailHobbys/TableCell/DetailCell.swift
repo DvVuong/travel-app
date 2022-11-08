@@ -40,7 +40,16 @@ class DetailCell: UITableViewCell {
         for star in rating.arrangedSubviews {
             star.isHidden = star.tag > data.point_evaluation
         }
-        
+    }
+    func setupTvDescription() {
+        tvDescriptions.delegate = self
     }
 
+}
+extension DetailCell: UITextViewDelegate {
+    func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
+        if textView == tvDescriptions {
+        }
+        return false
+    }
 }

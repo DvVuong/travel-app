@@ -135,7 +135,9 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
             let cell = hobbyCollection.dequeueReusableCell(withReuseIdentifier: "hobbyCell", for: indexPath) as! HobbyCollectionViewCell
             if let index = viewModel.cellForHobby(indexPath.item) {
                 cell.updateUI(index)
+                
             }
+            
             return cell
         } else {
             let cell = universeCollection.dequeueReusableCell(withReuseIdentifier: "universeCell", for: indexPath) as! UniverseCell

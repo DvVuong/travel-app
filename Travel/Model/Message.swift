@@ -16,6 +16,7 @@ struct Message {
     let massageSender: String
     let time_send: NSNumber
     let avatarSender: String
+    let imageMessage: String?
     init(dict: [String: Any]) {
         self.sendeID = dict["sendeID"] as? String ?? ""
         self.receiverID = dict["receiverID"] as? String ?? ""
@@ -25,6 +26,7 @@ struct Message {
         self.time_send = dict["time_send"] as? NSNumber ?? 0.0
         self.avatarReceiver = dict["avatarReceiver"] as? String ?? ""
         self.avatarSender = dict["avatarSender"] as? String ?? ""
+        self.imageMessage = dict["imageMessage"] as? String ?? ""
         
     }
     

@@ -45,7 +45,8 @@ open  class ImageCache: NSObject {
             return imageStr
     }
     func convertBase64ToImage(_ imgStr: String)  -> UIImage {
-        let imageData = Data(base64Encoded: imgStr, options: .ignoreUnknownCharacters)!
-        return  UIImage(data: imageData)!
+        guard  let imageData = Data(base64Encoded: imgStr, options: .ignoreUnknownCharacters) else { return UIImage() }
+        guard let image = UIImage(data: imageData) else { return UIImage() }
+        return  image
     }
 }

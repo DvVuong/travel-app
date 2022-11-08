@@ -24,7 +24,6 @@ class DetailCountrysViewController: UIViewController {
         // Do any additional setup after loading the view.
         updateUI()
         onBInd()
-        print("vuongdv",url)
     }
     private func updateUI() {
         setupCountryTable()

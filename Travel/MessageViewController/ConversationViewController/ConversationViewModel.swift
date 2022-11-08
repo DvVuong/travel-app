@@ -9,6 +9,8 @@ import Foundation
 import Combine
 import FirebaseAuth
 import FirebaseDatabase
+import FirebaseStorage
+import UIKit
 final class ConversationViewModel {
     let passImageStr = PassthroughSubject<String, Never>()
     let dosomething = PassthroughSubject<Void, Never>()
@@ -71,11 +73,11 @@ final class ConversationViewModel {
             }
         }
     }
-    func numberOfItem() -> Int {
+    func numberOfMessage() -> Int {
         return message.count
     }
-    func userForCell(_ index: Int) -> Message? {
-        guard index >= 0 && index < numberOfItem() else  {
+    func cellForMessage(_ index: Int) -> Message? {
+        guard index >= 0 && index < numberOfMessage() else  {
             return nil
         }
         return message[index]
@@ -108,6 +110,28 @@ final class ConversationViewModel {
            let userReceiverIDMassageRef = Database.database().reference().child("User-massage").child(receiverID)
            let value1:  [String: Any] = ["\(childRef.key ?? "")": 1]
            userReceiverIDMassageRef.updateChildValues(value1)
+        }
+    }
+    func uploadImageMessage(_ image: UIImage) {
+        let imageName = NSUUID().uuidString
+        let uploadDat = image.jpegData(compressionQuality: 0.4)!
+        let storRef = Storage.storage().reference().child("imageMesseage").child(imageName)
+        storRef.putData(uploadDat, metadata: nil) { (data, error) in
+            if error != nil {
+                print(error!.localizedDescription)
+                return
+            } else {
+                storRef.downloadURL { url, error in
+                    if error != nil {
+                        print(error!.localizedDescription)
+                        return
+                    }else {
+                        guard let url = url else { return }
+                        self.imgMessage = "\(url)"
+                        print("vuongdv",self.imgMessage)
+                    }
+                }
+            }
         }
     }
     

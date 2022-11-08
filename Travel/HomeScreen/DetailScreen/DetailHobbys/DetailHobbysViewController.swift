@@ -44,6 +44,7 @@ extension DetailHobbysViewController: UITableViewDelegate, UITableViewDataSource
         let cell = detailCountryTable.dequeueReusableCell(withIdentifier: "detailCell", for: indexPath) as! DetailCell
         if let index = viewModel.cellForCountry(indexPath.row) {
             cell.updateUI(index)
+            cell.setupTvDescription()
         }
         return cell
     }
