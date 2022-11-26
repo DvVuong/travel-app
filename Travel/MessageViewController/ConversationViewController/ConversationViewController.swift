@@ -31,6 +31,7 @@ class ConversationViewController: UIViewController {
    
    
     let photoPickerView = UIImagePickerController()
+    let cameraPikerView = UIImagePickerController()
     @IBOutlet private var icon: UIImageView!
    
     
@@ -109,12 +110,6 @@ class ConversationViewController: UIViewController {
         conversationTableView.tableFooterView = UIView()
         conversationTableView.separatorStyle = .none
         conversationTableView.contentInset = UIEdgeInsets(top: 5, left: 0, bottom: 10, right: 0)
-        
-//        conversationCollection.delegate = self
-//        conversationCollection.dataSource = self
-//        conversationCollection.alwaysBounceVertical = true
-//        let nib = UINib(nibName: "CollectionViewCell", bundle: nil)
-//        conversationCollection.register(nib, forCellWithReuseIdentifier: "chatCell")
     }
     fileprivate func setupIcon(){
         icon.isUserInteractionEnabled = true
@@ -131,11 +126,13 @@ class ConversationViewController: UIViewController {
         photo.addGestureRecognizer(tapGesPhoto)
     }
     @objc func didTapTakePhotoFormCamera() {
-        
+        cameraPikerView.delegate = self
+        cameraPikerView.sourceType = .camera
+        present(cameraPikerView, animated: true)
     }
     @objc func didTapChoosePhoto() {
         photoPickerView.delegate = self
-        
+        photoPickerView.sourceType = .photoLibrary
         present(photoPickerView, animated: true, completion: nil)
     }
     @objc private func didTapOnSend() {
@@ -197,21 +194,25 @@ extension ConversationViewController: UITextFieldDelegate {
         self.icon.image = UIImage(systemName: "hand.thumbsup.fill")
     }
 }
-
 extension ConversationViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage
-      
-        guard let imageData = image else { return }
-        self.imgStr = ImageCache.share.convertImgaeToBase64(image: imageData)
-        viewModel.passImageStr.send(imgStr)
-//        viewModel.uploadImageMessage(imageData)
-//        self.heightBtSendImageContrains.constant = -100
-//        UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 1, options: .transitionCrossDissolve, animations: {
-//            self.view.layoutIfNeeded()
-//        }, completion: nil)
-        viewModel.inputMaaasge(masssageTextField.text!, reciverName, receiverID!, linkUrl)
-        photoPickerView.dismiss(animated: true)
+        if picker === photoPickerView {
+            let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage
+          
+            guard let imageData = image else { return }
+            self.imgStr = ImageCache.share.convertImgaeToBase64(image: imageData)
+            viewModel.passImageStr.send(imgStr)
+            viewModel.inputMaaasge(masssageTextField.text!, reciverName, receiverID!, linkUrl)
+            photoPickerView.dismiss(animated: true)
+        }else if picker === cameraPikerView {
+            let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage
+            guard let imageData = image else { return }
+            self.imgStr = ImageCache.share.convertImgaeToBase64(image: imageData)
+            viewModel.passImageStr.send(imgStr)
+            viewModel.inputMaaasge(masssageTextField.text!, reciverName, receiverID!, linkUrl)
+            cameraPikerView.dismiss(animated: true)
+        }
+       
     }
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         photoPickerView.dismiss(animated: true)

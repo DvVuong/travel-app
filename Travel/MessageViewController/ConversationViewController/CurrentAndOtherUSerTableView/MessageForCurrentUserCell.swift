@@ -24,6 +24,7 @@ class MessageForCurrentUserCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
+        imgMessage.isUserInteractionEnabled = true
         
         imgMessage.layer.cornerRadius = 8
         imgMessage.layer.masksToBounds = true
@@ -40,6 +41,9 @@ class MessageForCurrentUserCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
 
         // Configure the view for the selected state
+    }
+    func handdleZoomImage(tapGesture: UITapGestureRecognizer) {
+        
     }
     func updateUI(_ message: Message) {
         guard let imgUrl = message.imageMessage else { return }
